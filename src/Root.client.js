@@ -1,20 +1,13 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
+"use client"
 
 import {useState, Suspense} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
-
 import {useServerResponse} from './Cache.client';
 import {LocationContext} from './LocationContext.client';
 
 export default function Root({initialCache}) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={"...loading..."}>
       <ErrorBoundary FallbackComponent={Error}>
         <Content />
       </ErrorBoundary>
@@ -22,15 +15,12 @@ export default function Root({initialCache}) {
   );
 }
 
+let initialQuery = {current: 1}
 function Content() {
-  const [location, setLocation] = useState({
-    selectedId: null,
-    isEditing: false,
-    searchText: '',
-  });
-  const response = useServerResponse(location);
+  const [query, setQuery] = useState(initialQuery);
+  const response = useServerResponse(query);
   return (
-    <LocationContext.Provider value={[location, setLocation]}>
+    <LocationContext.Provider value={[query, setQuery]}>
       {response.readRoot()}
     </LocationContext.Provider>
   );
